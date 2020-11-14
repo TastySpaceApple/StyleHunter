@@ -1,0 +1,226 @@
+body{
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f2f2f2;
+  font-size: 16px;
+}
+.app {
+  height: calc(100vh - 30px);
+  display: flex;
+  flex-direction: column;
+  border: 5px solid #45276f;
+  border-top: none;
+  box-sizing: border-box;
+}
+
+.titlebar {
+  height: 30px;
+  background: #45276f;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+.titlebar-button {
+  -webkit-app-region: no-drag;
+}
+
+.close{
+  -webkit-app-region: no-drag;
+  width: 30px;
+  height: 30px;
+  background: url('../img/close.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  border: none;
+  outline: none;
+  position: absolute;
+  right:0;
+  top: 0;
+  cursor: pointer;
+}
+
+.title{
+  line-height: 30px;
+  color:#fff;
+  padding-left: 10px;
+  font-size: 12px;
+}
+
+.close:hover{
+  background-color: rgba(0,0,0,0.2);
+}
+
+.loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #f2f2f2;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.loader img {
+  height: 128px;
+}
+
+.loader p, .loader img {
+  opacity: 0;
+  animation: show-logo 1s .2s forwards;
+  transform: translate3d(0,0,0);
+}
+
+@keyframes show-logo {
+  from { filter:blur(50px); opacity:0; }
+  to { filter:blur(0); opacity:1; }
+}
+
+table{
+  margin: 20px;
+  width: calc(100% - 40px);
+}
+
+.toolbar {
+  display: flex;
+  gap:5px;
+  background: #f2f2f2;
+  padding: 5px;
+  height: 42px;
+  box-sizing: border-box;
+}
+
+main {
+  position: relative;
+  flex:1;
+  width:100%;
+  overflow: auto;
+  padding-bottom: 40px;
+}
+
+/* Demonstrate a "mostly customized" scrollbar
+ * (won't be visible otherwise if width/height is specified) */
+main::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+  background-color: transparent; /* or add it to the track */
+}
+
+/* Add a thumb */
+main::-webkit-scrollbar-thumb {
+    background: #aaa;
+    border-radius: 5px;
+}
+
+.folder-input{
+  width:100%;
+  display: flex;
+}
+.folder-input input {
+  flex:1;}
+
+.folder-input button {
+  background-image: url('../img/folder.png');
+  background-repeat:  no-repeat;
+  background-size: 80% auto;
+  background-position: center;
+  width: 32px;
+  height: 32px;
+  border:none;
+  outline: none;
+  cursor: pointer;
+  border: 1px solid rgb(118, 118, 118);
+    border-left: none;
+    background-color: #eee;
+}
+
+.folder-input button:hover{
+  opacity: .8;
+}
+
+section.result-section{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+h2,h3{
+  font-size: 14px;
+  font-weight: normal;
+  background: #e2e2e2;
+  padding: 5px;
+  margin: 0;
+}
+
+.file-diff {
+border:1px solid #000;
+border-left: none;
+border-right: none;
+}
+
+.file-diff h3 {
+  font-size: 14px;
+  font-weight: normal;
+  background: #c2c2c2;
+  margin: 0;
+  cursor: pointer;
+  padding: 0;
+  background: #c2c2c2;
+}
+
+.file-diff h3{
+  display: flex;
+  user-select: none;
+}
+.file-diff h3:hover{
+  opacity: .8;
+}
+.file-diff h3 .file-name {
+  flex:1;
+}
+.file-diff h3 span {
+  padding: 5px 5px;
+  flex-basis: 120px;
+}
+
+.file-diff pre {
+  display: none;
+  padding: 0;
+  margin: 0;
+}
+.file-diff.is-open pre {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.file-diff del, .num-lines-removed {
+  text-decoration: none;
+  background-color: #f9d7dc;
+  border-color: #fac5cd;
+}
+
+.file-diff ins, .num-lines-added {
+  text-decoration: none;
+  background-color: #ecfdf0;
+}
+
+ul.file-name-list{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-left: 5px;
+}
+ul.file-name-list li:before{
+  content: '-';
+  margin-right: 3px;
+  color: red;
+}
+
+.changes-lines ins ,
+.changes-lines del {
+  display: block;
+}

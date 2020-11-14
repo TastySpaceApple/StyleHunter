@@ -1,0 +1,28 @@
+{
+  "name": "StyleHunter",
+  "version": "1.0.0",
+  "description": "An app to compare style files between two different projects",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "repository": "",
+  "keywords": [
+    "Events",
+    "google",
+    "calendar"
+  ],
+  "author": "Idan Itzhaky",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^10.1.2",
+    "electron-builder": "^22.9.1"
+  },
+  "dependencies": {
+    "diff": "^5.0.0",
+    "glob": "^7.1.6",
+    "googleapis": "^39.2.0"
+  }
+}

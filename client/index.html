@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self';">
+    <title>StyleHunter</title>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <div class="titlebar">
+      <span class="title">Style Hunter</title>
+      <button class="close"></button>
+    </div>
+     <div class="app">
+
+    <section class="toolbar">
+      <span class="folder-input">
+        <input type="text" />
+        <button ></button>
+      </span>
+
+      <span class="folder-input">
+        <input type="text" />
+        <button></button>
+      </span>
+
+        <select id="selectDiffType">
+          <option value="css">CSS</option>
+          <option value="lines">Lines</option>
+        </select>
+
+        <button id="btnRun">Run</button>
+
+    </section>
+
+    <main>
+
+      <h2 id="changes-title">Changes</h2>
+
+      <section id="filesDiffs">
+      </section>
+
+      <section id="missingFiles" class="result-section">
+        <h3>Missing Files in Folder 1</h3><h3>Missing Files in Folder 2</h3>
+        <ul class='file-name-list'></ul>
+        <ul class='file-name-list'></ul>
+      </section>
+
+      <div class="loader">
+        <img src="img/logo.png" />
+        <p>Style Hunter</p>
+      </div>
+
+    </main>
+
+
+    <!-- You can also require other files to run in this process -->
+    <script type="module" src="./renderer.js"></script>
+  </div>
+  </body>
+</html>
