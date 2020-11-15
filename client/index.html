@@ -27,8 +27,8 @@
       </span>
 
         <select id="selectDiffType">
-          <option value="css">CSS</option>
           <option value="lines">Lines</option>
+          <option value="css">CSS</option>
         </select>
 
         <button id="btnRun">Run</button>
@@ -37,14 +37,25 @@
 
     <main>
 
-      <h2 id="changes-title">Changes</h2>
+      <h2 id="changes-title">Changed Files</h2>
 
-      <section id="filesDiffs">
+      <section id="filesDiffs" class="filesDiffs">
       </section>
 
-      <section id="missingFiles" class="result-section">
-        <h3>Missing Files in Folder 1</h3><h3>Missing Files in Folder 2</h3>
+      <h2 id="renames-title">Renamed Files</h2>
+
+      <section id="filesDiffsRenamed" class="filesDiffs">
+      </section>
+
+      <h2 id="deleted-title">Deleted Files</h2>
+
+      <section id="deletedFiles">
         <ul class='file-name-list'></ul>
+      </section>
+
+      <h2 id="new-files-title">New Files</h2>
+
+      <section id="newFiles">
         <ul class='file-name-list'></ul>
       </section>
 

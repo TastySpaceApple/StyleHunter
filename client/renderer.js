@@ -25,37 +25,44 @@ async function run(){
   let diffType = document.querySelector('#selectDiffType').value;
   let result = await compareFolders(folderInputs[0].value, folderInputs[1].value, diffType);
 
-  fileNamesLists[0].setList(result.missingFiles[0])
-  fileNamesLists[1].setList(result.missingFiles[1])
+  fileNamesLists[0].setList(result.deletedFiles);
+  fileNamesLists[1].setList(result.newFiles);
 
   document.querySelector('#changes-title').textContent =
     `Changed Files (${result.differentFiles.length} of ${result.numMatchingFiles})`
 
   document.querySelector('#filesDiffs').className = 'changes-' + diffType;
-  document.querySelector('#filesDiffs').innerHTML =
-    result.differentFiles.map(fileitem => {
-      let { numRemoved, numAdded, diffs, fileName } = fileitem;
-      return `<div class="file-diff">
-        <h3>
-          <span class="file-name">${fileName}</span>
-          <span class="num-lines-removed">Removed: ${numRemoved}</span>
-          <span class="num-lines-added">Added: ${numAdded}</span>
-        </h3>
-        <pre>` +
-          diffs.map(diff => {
-            let tag = 'span';
-            if(diff.removed) tag = 'del';
-            if(diff.added) tag = 'ins';
-            return `<${tag}>${diff.value}</${tag}>`
-          }).join('') +
-        `</pre>
-      </div>`
-    }).join('')
-  Array.from(document.querySelectorAll('#filesDiffs h3'))
+  document.querySelector('#filesDiffs').innerHTML = renderFilesDiffs(result.differentFiles)
+  document.querySelector('#filesDiffsRenamed').innerHTML = renderFilesDiffs(result.renamedFiles)
+
+  Array.from(document.querySelectorAll('.file-diff h3'))
     .forEach(el => el.addEventListener('click', function(e){
       this.parentElement.classList.toggle('is-open')
     })
   )
+}
+
+function renderFilesDiffs(files){
+  return files.map(fileitem => {
+    let { numRemoved, numAdded, diffs, fileName, newFileName } = fileitem;
+    if(newFileName) newFileName = `<i>( --> ${newFileName} )</i>`
+    else newFileName = '';
+    return `<div class="file-diff">
+      <h3>
+        <span class="file-name">${fileName} ${newFileName}</span>
+        <span class="num-lines-removed">Removed: ${numRemoved}</span>
+        <span class="num-lines-added">Added: ${numAdded}</span>
+      </h3>
+      <pre>` +
+        diffs.map(diff => {
+          let tag = 'span';
+          if(diff.removed) tag = 'del';
+          if(diff.added) tag = 'ins';
+          return `<${tag}>${diff.value}</${tag}>`
+        }).join('') +
+      `</pre>
+    </div>`
+  }).join('')
 }
 
 function log(t) { console.log(t) }

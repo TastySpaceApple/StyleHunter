@@ -2,12 +2,13 @@ const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 const Diff = require('diff');
+const { distance } = require('fastest-levenshtein')
 
 async function compareFolders(folderPath1, folderPath2, diffType){
   const filePaths1 = glob.sync(`${folderPath1}/**/*.scss`)
   const filePaths2 = glob.sync(`${folderPath2}/**/*.scss`)
 
-  const missingFiles = [findMissingFiles(filePaths2, filePaths1), findMissingFiles(filePaths1, filePaths2)]
+  const missingFiles = [findMissingFiles(filePaths1, filePaths2), findMissingFiles(filePaths2, filePaths1)]
 
   const matchingFiles = findMatchingFiles(filePaths1, filePaths2);
   let numMatchingFiles = matchingFiles.length;
@@ -22,8 +23,52 @@ async function compareFolders(folderPath1, folderPath2, diffType){
   })
 
   differentFiles = differentFiles.filter(fileDiff => fileDiff.numRemoved > 0 || fileDiff.numAdded > 0)
+  differentFiles = differentFiles.sort((item1, item2) => (item2.numAdded + item2.numRemoved) - (item1.numAdded + item1.numRemoved))
 
-  return { missingFiles, differentFiles, numMatchingFiles }
+  let [filesWithoutMatch1, filesWithoutMatch2] = missingFiles;
+
+  filesWithoutMatch1 = filesWithoutMatch1.map(filePath => { return {filePath, content: readFile(filePath) } })
+  filesWithoutMatch2 = filesWithoutMatch2.map(filePath => { return {filePath, content: readFile(filePath) } })
+
+  let renamedFiles = filesWithoutMatch1.map(file => findRenamedFile(file, filesWithoutMatch2, diffType));
+  let deletedFiles = renamedFiles.filter(item => item.newFileName === false)
+  renamedFiles = renamedFiles.filter(item => item.newFileName !== false)
+  renamedFiles = renamedFiles.sort((item1, item2) => (item2.numAdded + item2.numRemoved) - (item1.numAdded + item1.numRemoved))
+
+  deletedFiles = deletedFiles.map(item => item.fileName)
+
+  let newFiles = filesWithoutMatch2.map(file => path.basename(file.filePath))
+  newFiles = newFiles.filter(newFile => {
+      return renamedFiles.some(renamedFile => renamedFile == newFile)
+  })
+
+  // renamedFiles = [];
+  return { missingFiles, differentFiles, numMatchingFiles, renamedFiles, deletedFiles, newFiles }
+}
+
+function readFile(filePath){
+  return fs.readFileSync(filePath, 'utf8');
+}
+
+function findRenamedFile(file, fileList, diffType){
+  let minDistance = -1, closestFile;
+  for(const fileFromList of fileList){
+    let d = distance ( file.content, fileFromList.content );
+    if(minDistance == -1 || d < minDistance){
+      minDistance = d;
+      closestFile = fileFromList;
+    }
+  }
+
+  if(minDistance > Math.max(file.content.length, closestFile.content.length) / 2)
+    return { fileName: path.basename(file.filePath), newFileName: false };
+
+  let { numRemoved, numAdded, diffs } =
+        compareTwoFiles(file.filePath, closestFile.filePath, diffType);
+
+  return { fileName: path.basename(file.filePath),
+           newFileName: path.basename(closestFile.filePath),
+           numRemoved, numAdded, diffs}
 }
 
 function findMissingFiles(filePaths1, filePaths2){
@@ -50,7 +95,7 @@ function filePathsListContains(filePaths, filePath){
 let emptyRegex = /^\s+$/;
 let importLineRegex = /^@import/;
 
-const ignoreChanges = /["'][.\/sc]*colors["']/;
+const ignoreChanges = /["'][.\/sc]*colors[.\/sc]*["']/;
 
 function compareTwoFiles(filePath1, filePath2, diffType){
   let fileContent1 = fs.readFileSync(filePath1, 'utf8');
@@ -62,7 +107,6 @@ function compareTwoFiles(filePath1, filePath2, diffType){
       diffs = Diff.diffCss(fileContent1, fileContent2)
       break;
     case 'lines':
-    console.log('what')
       diffs = Diff.diffLines(fileContent1, fileContent2, {comparator: function(left, right){
         // console.log(left, right)
         return left.trim() === right.trim();
