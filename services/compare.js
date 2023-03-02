@@ -5,8 +5,8 @@ const Diff = require('diff');
 const { distance } = require('fastest-levenshtein')
 
 async function compareFolders(folderPath1, folderPath2, diffType){
-  const filePaths1 = glob.sync(`${folderPath1}/**/*.scss`)
-  const filePaths2 = glob.sync(`${folderPath2}/**/*.scss`)
+  const filePaths1 = glob.sync(`${folderPath1}/**/*.scss`, {ignore: "**/node_modules/**"})
+  const filePaths2 = glob.sync(`${folderPath2}/**/*.scss`, {ignore: "**/node_modules/**"})
 
   const missingFiles = [findMissingFiles(filePaths1, filePaths2), findMissingFiles(filePaths2, filePaths1)]
 
@@ -93,7 +93,7 @@ function filePathsListContains(filePaths, filePath){
 }
 
 let emptyRegex = /^\s+$/;
-let importLineRegex = /^@import/;
+let importLineRegex = /^\s*@import/;
 
 const ignoreChanges = /["'][.\/sc]*colors[.\/sc]*["']/;
 
